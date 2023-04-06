@@ -16,6 +16,19 @@ $ npm i
 $ npm start
 ```
 
+docker
+
+```bash
+$ docker build . -t rrossilli/youtext<version>
+$ docker run -p 3000:3000 rrossilli/youtext<version>
+```
+
+docker compose
+
+```bash
+$ docker-compose up --build
+```
+
 ## How
 
 1. Identify the video URL. It can be in one of these formats:
