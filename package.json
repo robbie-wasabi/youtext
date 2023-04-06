@@ -1,0 +1,32 @@
+{
+  "name": "youtext",
+  "version": "1.0.0",
+  "description": "A Streamlined YouTube Transcript Extractor",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rrossilli/youtext.git"
+  },
+  "keywords": [
+    "youtube",
+    "text",
+    "youtext",
+    "transcript"
+  ],
+  "author": "robbie_wasabi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rrossilli/youtext/issues"
+  },
+  "homepage": "https://github.com/rrossilli/youtext#readme",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "openai": "^3.2.1",
+    "youtube-transcript": "^1.0.5"
+  }
+}
