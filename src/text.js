@@ -1,26 +1,59 @@
 import cfg from "./config.js";
 import { createChatCompletion } from "./openai.js";
 
-// todo: if only one chunk, text is split into two chunks for some reason and first chunk is empty
 function splitText(text, maxLength = 8192) {
-  const paragraphs = text.trim().split("\n");
   let currentLength = 0;
   let currentChunk = [];
   const chunks = [];
 
-  for (const paragraph of paragraphs) {
-    if (currentLength + paragraph.length + 1 <= maxLength) {
-      currentChunk.push(paragraph);
-      currentLength += paragraph.length + 1;
-    } else {
-      chunks.push(currentChunk.join("\n"));
-      currentChunk = [paragraph];
-      currentLength = paragraph.length + 1;
+  // remove brackets and content inside. for example, [music] or [applause]
+  text = text.replace(/\[.*?\]/g, "");
+
+  // fallback to splitting by space if we can't split by newline.
+  // note that this may result in splitting a sentence in half
+  // todo: we should figure out a better way to split text
+  const splitTextBySpace = (txt) =>
+    txt.split(/(\s+)/).reduce(
+      (acc, word) => {
+        const last = acc.pop();
+        const newString = (last + word).trim();
+        if (newString.length <= maxLength) {
+          return [...acc, newString];
+        }
+        return [...acc, last.trim(), word];
+      },
+      [""]
+    );
+
+  if (text.includes("\n")) {
+    let paragraphs = text.trim().split("\n");
+
+    for (const paragraph of paragraphs) {
+      if (currentLength + paragraph.length + 1 <= maxLength) {
+        currentChunk.push(paragraph);
+        currentLength += paragraph.length + 1;
+      } else {
+        chunks.push(currentChunk.join("\n"));
+        currentChunk = [paragraph];
+        currentLength = paragraph.length + 1;
+      }
+    }
+  } else {
+    const separatedText = splitTextBySpace(text);
+    for (const word of separatedText) {
+      if (currentLength + word.length + 1 <= maxLength) {
+        currentChunk.push(word);
+        currentLength += word.length + 1;
+      } else {
+        chunks.push(currentChunk.join(" "));
+        currentChunk = [word];
+        currentLength = word.length + 1;
+      }
     }
   }
 
   if (currentChunk.length > 0) {
-    chunks.push(currentChunk.join("\n"));
+    chunks.push(currentChunk.join(text.includes("\n") ? "\n" : " "));
   }
 
   return chunks;
@@ -45,12 +78,10 @@ async function transform(text, prompt) {
   const summaries = [];
   const chunks = Array.from(splitText(text));
 
-  // todo: hack to remove empty chunks
-  // for (let i = chunks.length - 1; i >= 0; i--) {
-  //   if (chunks[i].length === 0) {
-  //     chunks.splice(i, 1);
-  //   }
-  // }
+  // log lengths of each chunk
+  for (const [i, chunk] of chunks.entries()) {
+    console.log(`Chunk ${i + 1} / ${chunks.length} length: ${chunk.length}`);
+  }
 
   for (const [i, chunk] of chunks.entries()) {
     console.log(`Transforming chunk ${i + 1} / ${chunks.length}`);
