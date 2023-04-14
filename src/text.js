@@ -1,17 +1,17 @@
-import cfg from "./config.js";
 import { createChatCompletion } from "./openai.js";
+
+// some thoughts
+// maybe we upload each summary to ipfs
 
 function splitText(text, maxLength = 8192) {
   let currentLength = 0;
   let currentChunk = [];
+  let startIndex = 0;
   const chunks = [];
 
   // remove brackets and content inside. for example, [music] or [applause]
   text = text.replace(/\[.*?\]/g, "");
 
-  // fallback to splitting by space if we can't split by newline.
-  // note that this may result in splitting a sentence in half
-  // todo: we should figure out a better way to split text
   const splitTextBySpace = (txt) =>
     txt.split(/(\s+)/).reduce(
       (acc, word) => {
@@ -25,18 +25,23 @@ function splitText(text, maxLength = 8192) {
       [""]
     );
 
-  if (text.includes("\n")) {
-    let paragraphs = text.trim().split("\n");
+  const pushChunk = (joinedChunk, separator) => {
+    chunks.push({
+      text: joinedChunk,
+      start: startIndex,
+      end: startIndex + joinedChunk.length - 1,
+    });
+    startIndex += joinedChunk.length + separator.length;
+  };
 
-    for (const paragraph of paragraphs) {
-      if (currentLength + paragraph.length + 1 <= maxLength) {
-        currentChunk.push(paragraph);
-        currentLength += paragraph.length + 1;
-      } else {
-        chunks.push(currentChunk.join("\n"));
-        currentChunk = [paragraph];
-        currentLength = paragraph.length + 1;
-      }
+  if (text.includes("\n")) {
+    if (currentLength + paragraph.length + 1 <= maxLength) {
+      currentChunk.push(paragraph);
+      currentLength += paragraph.length + 1;
+    } else {
+      chunks.push(currentChunk.join("\n"));
+      currentChunk = [paragraph];
+      currentLength = paragraph.length + 1;
     }
   } else {
     const separatedText = splitTextBySpace(text);
@@ -45,7 +50,7 @@ function splitText(text, maxLength = 8192) {
         currentChunk.push(word);
         currentLength += word.length + 1;
       } else {
-        chunks.push(currentChunk.join(" "));
+        pushChunk(currentChunk.join(" "), " ");
         currentChunk = [word];
         currentLength = word.length + 1;
       }
@@ -53,7 +58,10 @@ function splitText(text, maxLength = 8192) {
   }
 
   if (currentChunk.length > 0) {
-    chunks.push(currentChunk.join(text.includes("\n") ? "\n" : " "));
+    pushChunk(
+      currentChunk.join(text.includes("\n") ? "\n" : " "),
+      text.includes("\n") ? "\n" : " "
+    );
   }
 
   return chunks;
@@ -66,7 +74,7 @@ function createMessage(chunk, prompt) {
   };
 }
 
-// use openai to transform text
+// use openai apit to transform text
 async function transform(text, prompt) {
   if (!text) {
     return "Error: No text to transform";
@@ -85,7 +93,7 @@ async function transform(text, prompt) {
 
   for (const [i, chunk] of chunks.entries()) {
     console.log(`Transforming chunk ${i + 1} / ${chunks.length}`);
-    const messages = [createMessage(chunk, prompt)];
+    const messages = [createMessage(chunk.text, prompt)];
 
     const summary = await createChatCompletion(messages, prompt);
 
@@ -109,7 +117,8 @@ const createPrompt = (prompt) => {
 
 async function getTopics(text) {
   const prompt = createPrompt(
-    `create a numbered list of the main topics. Omit any topics that refer to the text, discussion, or transcript itself.`
+    `create a list of the main topics. for each list item, . 
+    Omit any topics that refer to the text, discussion, or transcript itself.`
   );
   return await transform(text, prompt);
 }
