@@ -45,12 +45,18 @@ async function transform(text, prompt) {
   const summaries = [];
   const chunks = Array.from(splitText(text));
 
+  // todo: hack to remove empty chunks
+  // for (let i = chunks.length - 1; i >= 0; i--) {
+  //   if (chunks[i].length === 0) {
+  //     chunks.splice(i, 1);
+  //   }
+  // }
+
   for (const [i, chunk] of chunks.entries()) {
     console.log(`Transforming chunk ${i + 1} / ${chunks.length}`);
     const messages = [createMessage(chunk, prompt)];
 
     const summary = await createChatCompletion(messages, prompt);
-    console.log("summary", summary);
 
     summaries.push(summary);
   }

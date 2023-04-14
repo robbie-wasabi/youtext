@@ -45,3 +45,4 @@ https://youtext.io/VIDEO_ID
 
 1. Use AI to fix gramatical errors in transcript
 2. Use AI to summarize transcript
+3. Can we answer the thumbnail?
