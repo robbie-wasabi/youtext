@@ -1,3 +1,4 @@
+import cfg from "../config.js";
 import { createChatCompletion } from "./openai.js";
 
 // some thoughts
@@ -74,7 +75,7 @@ function createMessage(chunk, prompt) {
   };
 }
 
-// use openai apit to transform text
+// use openai api to transform text
 async function transform(text, prompt) {
   if (!text) {
     return "Error: No text to transform";
@@ -88,7 +89,9 @@ async function transform(text, prompt) {
 
   // log lengths of each chunk
   for (const [i, chunk] of chunks.entries()) {
-    console.log(`Chunk ${i + 1} / ${chunks.length} length: ${chunk.length}`);
+    console.log(
+      `Chunk ${i + 1} / ${chunks.length} length: ${chunk.text.length}`
+    );
   }
 
   for (const [i, chunk] of chunks.entries()) {
@@ -111,14 +114,13 @@ async function transform(text, prompt) {
 }
 
 const createPrompt = (prompt) => {
-  const prefix = "In the above text, ";
+  const prefix = "From the text above, ";
   return `${prefix}${prompt}`;
 };
 
 async function getTopics(text) {
   const prompt = createPrompt(
-    `create a list of the main topics. for each list item, . 
-    Omit any topics that refer to the text, discussion, or transcript itself.`
+    `create a list of the main topics. Omit any topics that refer to the text, discussion, or transcript itself.`
   );
   return await transform(text, prompt);
 }

@@ -1,7 +1,7 @@
 import { YoutubeTranscript } from "youtube-transcript";
 import express from "express";
-import { getTopics } from "./src/text.js";
-import cfg from "./src/config.js";
+import { getTopics } from "./helpers/text.js";
+import cfg from "./config.js";
 
 const app = express();
 
@@ -39,3 +39,5 @@ app.get("/:id", async (req, res) => {
 app.listen(cfg.port, () => {
   console.log(`Server is running at http://localhost:${cfg.port}`);
 });
+
+export { app };
