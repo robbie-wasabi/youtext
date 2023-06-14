@@ -8,6 +8,7 @@
     "start": "node app.js",
     "nodemon": "nodemon app.js"
   },
+  "type": "module",
   "jest": {
     "testPathDirs": [
       "__tests__"
@@ -45,6 +46,7 @@
     "babel-jest": "^29.5.0",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "ipfs-http-client": "^60.0.0",
     "openai": "^3.2.1",
     "youtube-transcript": "^1.0.5"
   },

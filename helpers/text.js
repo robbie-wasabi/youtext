@@ -1,5 +1,5 @@
 import cfg from "../config.js";
-import { createChatCompletion } from "./openai.js";
+import { createChatCompletion } from "../clients/openai.js";
 
 // some thoughts
 // maybe we upload each summary to ipfs
@@ -86,6 +86,7 @@ async function transform(text, prompt) {
 
   const summaries = [];
   const chunks = Array.from(splitText(text));
+  console.log(chunks.length);
 
   // log lengths of each chunk
   for (const [i, chunk] of chunks.entries()) {
@@ -96,6 +97,7 @@ async function transform(text, prompt) {
 
   for (const [i, chunk] of chunks.entries()) {
     console.log(`Transforming chunk ${i + 1} / ${chunks.length}`);
+    console.log(chunk.text);
     const messages = [createMessage(chunk.text, prompt)];
 
     const summary = await createChatCompletion(messages, prompt);

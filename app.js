@@ -27,7 +27,7 @@ app.get("/:id", async (req, res) => {
   try {
     const data = await YoutubeTranscript.fetchTranscript(id);
     transcript = data.map((t) => t.text).join();
-    transcript = transcript.replaceAll(",", ", ");
+    // console.log(transcript);
     const topics = await getTopics(transcript);
     res.send(topics);
   } catch (e) {
