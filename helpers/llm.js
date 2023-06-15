@@ -52,7 +52,7 @@ function createMessage(chunk, prompt) {
 // Split text into chunks of a maximum length
 export function splitText(
     text,
-    maxLength = 3000,
+    maxLength = 3000, // TODO: I think that they actually made the token limit larger...
     model = 'gpt-3.5-turbo',
     question = ''
 ) {

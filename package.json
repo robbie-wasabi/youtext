@@ -28,7 +28,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rrossilli/youtext.git"
+    "url": "git+https://github.com/quokkaine/youtext.git"
   },
   "keywords": [
     "youtube",
@@ -39,9 +39,9 @@
   "author": "robbie_wasabi",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/rrossilli/youtext/issues"
+    "url": "https://github.com/quokkaine/youtext/issues"
   },
-  "homepage": "https://github.com/rrossilli/youtext#readme",
+  "homepage": "https://github.com/quokkaine/youtext#readme",
   "dependencies": {
     "@dqbd/tiktoken": "^1.0.7",
     "babel-jest": "^29.5.0",
@@ -49,6 +49,7 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "fs": "^0.0.1-security",
+    "googleapis": "^118.0.0",
     "ipfs-http-client": "^60.0.0",
     "openai": "^3.2.1",
     "youtube-transcript": "^1.0.5"
