@@ -40,17 +40,13 @@ app.get('/:id', async (req, res, next) => {
 
 app.get('/:id/interpretation', async (req, res, next) => {
     try {
-        const { view, override } = req.query
+        const { view } = req.query
         const { id } = req.params
         if (!id) {
             throw new Error('Must supply YouTube video ID')
         }
 
-        const interpretation = await getInterpretationHandler(
-            id,
-            override,
-            false
-        )
+        const interpretation = await getInterpretationHandler(id, false, false)
         view == '1'
             ? res.send(SimpleView(interpretation.content))
             : res.send(interpretation)
