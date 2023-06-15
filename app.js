@@ -2,11 +2,17 @@ import express from 'express'
 import cfg from './config.js'
 import { getTranscriptHandler } from './handlers/transcript.js'
 import { getInterpretationHandler } from './handlers/interpretation.js'
+import { SimpleView } from './helpers/views.js'
 
 const app = express()
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error('Error occurred:', err)
+    res.status(500).send('Internal Server Error')
+})
+
 app.get('/', async (req, res) => {
-    console.log('here')
     res.send('provide a youtube video id to get transcript')
 })
 
@@ -17,25 +23,40 @@ app.get('/health', (req, res) => {
     })
 })
 
-app.get('/:id', async (req, res) => {
-    const id = req.params.id
-    if (!id) {
-        res.send('must supply youtube video id')
-        return
+app.get('/:id', async (req, res, next) => {
+    try {
+        const { view, override } = req.query
+        const id = req.params.id
+        if (!id) {
+            throw new Error('Must supply YouTube video ID')
+        }
+
+        const transcript = await getTranscriptHandler(id)
+        view == '1' ? res.send(SimpleView(transcript)) : res.send(transcript)
+    } catch (error) {
+        next(error)
     }
-    const data = await getTranscriptHandler(id)
-    res.send(data)
 })
 
-app.get('/:id/interpretation', async (req, res) => {
-    const id = req.params.id
-    if (!id) {
-        res.send('must supply youtube video id')
-        return
-    }
+app.get('/:id/interpretation', async (req, res, next) => {
+    try {
+        const { view, override } = req.query
+        const { id } = req.params
+        if (!id) {
+            throw new Error('Must supply YouTube video ID')
+        }
 
-    const interpretation = await getInterpretationHandler(id)
-    res.send(interpretation)
+        const interpretation = await getInterpretationHandler(
+            id,
+            override,
+            false
+        )
+        view == '1'
+            ? res.send(SimpleView(interpretation.content))
+            : res.send(interpretation)
+    } catch (error) {
+        next(error)
+    }
 })
 
 app.listen(cfg.port, () => {

@@ -9,7 +9,8 @@ import {
     query,
     where,
     addDoc,
-    doc
+    doc,
+    setDoc
 } from 'firebase/firestore'
 import config from '../config.js'
 
@@ -40,4 +41,22 @@ export default class FirebaseClient {
         })
         return res
     }
+
+    // TODO: fix
+    // static updateInterpretation = async (ytId, newContent) => {
+    //     const interpretation = await FirebaseClient.getInterpretation(ytId)
+    //     if (!interpretation) {
+    //         throw new Error('Interpretation not found')
+    //     }
+
+    //     interpretation.content = newContent
+    //     const docRef = doc(
+    //         FirebaseClient._db,
+    //         'interpretations',
+    //         interpretation.id
+    //     )
+    //     await setDoc(docRef, interpretation)
+
+    //     return interpretation
+    // }
 }
