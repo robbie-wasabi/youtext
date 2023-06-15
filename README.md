@@ -29,19 +29,9 @@ docker compose
 $ docker-compose up --build
 ```
 
-## How
+## TODOs:
 
-1. Identify the video URL. It can be in one of these formats:
-
-https://www.youtube.com/watch?v=VIDEO_ID
-https://youtu.be/VIDEO_ID
-https://www.youtube.com/embed/VIDEO_ID
-
-2. Append the video id
-
-https://youtext.io/VIDEO_ID
-
-## Future
-
-1. Use AI to fix gramatical errors in transcript
-2. Use AI to summarize transcript
+1. figure out the correct output for any transcript input, is a summary sufficient or an outline or something else?
+2. automatic youtube video commenting
+3. our prompt has bugs sometimes, revise this potentially.
+4. etc... anything else you want

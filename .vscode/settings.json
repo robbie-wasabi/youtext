@@ -1,0 +1,10 @@
+{
+    "css.validate": false,
+    "editor.codeActionsOnSave": [
+        "source.formatDocument",
+        "source.fixAll.eslint"
+    ],
+    "prettier.tabWidth": 4,
+    "editor.tabSize": 4,
+    "editor.wordWrap": "on",
+}
