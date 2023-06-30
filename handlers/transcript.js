@@ -1,5 +1,5 @@
 import YoutubeClient from '../clients/youtube.js'
 
-export const getTranscriptHandler = async (id) => {
-    return await YoutubeClient.getTranscript(id)
+export const getTranscriptHandler = async (id, useMockData = false) => {
+    return await YoutubeClient.fetchTranscript(id, useMockData)
 }

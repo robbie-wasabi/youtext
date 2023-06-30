@@ -1,16 +1,29 @@
 import { YoutubeTranscript } from 'youtube-transcript'
-// import { youtube_v3 } from 'googleapis'
+import fs from 'fs'
 
 export default class YoutubeClient {
-    static formatTranscriptData = (data) => {
+    static _formatTranscriptData = (data) => {
         let transcript = data.map((t) => t.text).join()
         transcript = transcript.replaceAll(',', ', ')
         return transcript
     }
 
-    static getTranscript = async (id) => {
+    static _fetchTranscript = async (id) => {
         const data = await YoutubeTranscript.fetchTranscript(id)
-        return this.formatTranscriptData(data)
+        return this._formatTranscriptData(data)
+    }
+
+    static _readMockData = (id) => {
+        return fs.readFileSync(`./mockdata/${id}.txt`, 'utf8')
+    }
+
+    static fetchTranscript = async (id, useMockData = false) => {
+        // if useMockData is true, read from mockdata folder
+        const data = useMockData
+            ? this._readMockData(id)
+            : await this._fetchTranscript(id)
+
+        return data
     }
 
     // TODO: in progress

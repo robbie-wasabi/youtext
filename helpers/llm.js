@@ -1,46 +1,5 @@
-import { get_encoding, encoding_for_model } from '@dqbd/tiktoken'
 import nlp from 'compromise'
-
-// Returns the number of tokens used by a list of messages.
-function countMessageTokens(messages, model = 'gpt-3.5-turbo-0301') {
-    var encoding
-    try {
-        encoding = encoding_for_model(model)
-    } catch (err) {
-        console.warn('Warning: model not found. Using cl100k_base encoding.')
-        encoding = get_encoding('cl100k_base')
-    }
-    var tokensPerMessage, tokensPerName
-    if (model == 'gpt-3.5-turbo') {
-        return countMessageTokens(messages, 'gpt-3.5-turbo-0301')
-    } else if (model == 'gpt-4') {
-        return countMessageTokens(messages, 'gpt-4-0314')
-    } else if (model == 'gpt-3.5-turbo-0301') {
-        tokensPerMessage = 4
-        tokensPerName = -1
-    } else if (model == 'gpt-4-0314') {
-        tokensPerMessage = 3
-        tokensPerName = 1
-    } else {
-        throw new Error(
-            `num_tokens_from_messages() is not implemented for model ${model}.\n` +
-                ' See https://github.com/openai/openai-python/blob/main/chatml.md for' +
-                ' information on how messages are converted to tokens.'
-        )
-    }
-    var numTokens = 0
-    messages.forEach((message) => {
-        numTokens += tokensPerMessage
-        Object.entries(message).forEach(([key, value]) => {
-            numTokens += encoding.encode(value).length
-            if (key == 'name') {
-                numTokens += tokensPerName
-            }
-        })
-    })
-    numTokens += 3 // every reply is primed with assistant
-    return numTokens
-}
+import { Tiktoken } from './tiktoken.js'
 
 function createMessage(chunk, prompt) {
     return {
@@ -56,35 +15,54 @@ export function splitText(
     model = 'gpt-3.5-turbo',
     question = ''
 ) {
-    // Flatten paragraphs
+    // flatted paragraphs
     var flattenedParagraphs = text.split('\n').join(' ')
 
-    // Use the compromise library to split the text into sentences
-    var sentences = nlp(flattenedParagraphs).sentences().out('array')
-    // console.log(sentences)
+    // TODO:
+    // parse sententces... this isn't reliable
+    // var sentences = nlp(flattenedParagraphs).sentences().out('array')
+    var sentences = []
+
+    // split the text into sentences without splitting the sentences themselves (easier said that done)
+    // the youtube transcriber has a tendency to prefer commas or periods. our best bet for now is to split on the
+    // punctuation that is most prevalent.
+    if (sentences.length <= 1 && text.length > maxLength) {
+        var numPeriods = (flattenedParagraphs.match(/\./g) || []).length
+        var numCommas = (flattenedParagraphs.match(/,/g) || []).length
+        if (numPeriods > numCommas) {
+            sentences = flattenedParagraphs.split(',')
+        } else {
+            sentences = flattenedParagraphs.split('.')
+        }
+
+        sentences = sentences.map((s) => s.replace(/[^\w\s]/g, ''))
+    }
 
     var chunks = []
     var currentChunk = []
 
-    sentences.forEach((sentence) => {
-        sentence = sentence.trim()
+    const tiktoken = new Tiktoken(model)
+    sentences.forEach((s) => {
+        s = s.trim()
         var messageWithAdditionalSentence = [
-            createMessage(currentChunk.join(' ') + ' ' + sentence, question)
+            createMessage(currentChunk.join(' ') + ' ' + s, question)
         ]
 
         var expectedTokenUsage =
-            countMessageTokens(messageWithAdditionalSentence, model) + 1
+            tiktoken.countMessageTokens(messageWithAdditionalSentence, model) +
+            1
+        console.log(expectedTokenUsage)
         if (expectedTokenUsage <= maxLength) {
-            currentChunk.push(sentence)
+            currentChunk.push(s)
         } else {
             chunks.push(currentChunk.join(' '))
-            currentChunk = [sentence]
+            currentChunk = [s]
             var messageThisSentenceOnly = [
                 createMessage(currentChunk.join(' '), question)
             ]
 
             expectedTokenUsage =
-                countMessageTokens(messageThisSentenceOnly, model) + 1
+                tiktoken.countMessageTokens(messageThisSentenceOnly, model) + 1
             if (expectedTokenUsage > maxLength) {
                 throw new Error(
                     'Sentence is too long in webpage: ' +
@@ -112,7 +90,7 @@ export function createMessagesFromText(
     maxLength = 3000,
     model = 'gpt-3.5-turbo'
 ) {
-    var chunks = splitText(text, maxLength, model, question)
+    var chunks = splitText(text)
     // console.log(chunks)
     return createMessagesFromChunks(chunks, question)
 }
