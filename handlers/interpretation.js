@@ -5,7 +5,14 @@ import { createMessagesFromText } from '../helpers/llm.js'
 import Promise from 'promise'
 import { info as logInfo } from '../helpers/logger.js'
 
-const prompt = `Please summarize the key points from the transcript by extracting the essential information, removing unnecessary details, and refraining from introducing any external sources or speculative content. Focus solely on the core ideas discussed in the text without mentioning the speaker(s) or their beliefs. Again, your goal is to read the transcript, understand the concepts, and reexplain them in your own words without mentioning anything else.`
+// TODO: this prompt is *okay* but it could be a lot better
+// an ideal prompt satisfies the following:
+// 1. strictly avoid references to the content itself (e.g. "in this video", "in the transcript", "in this clip") as
+//    the user is already aware of the content and it is redundant to mention it.
+// 2. sparingly refer to the speaker. although referring to the speaker is sometimes necessary, again, the user
+//    probably already knows who the speaker is.
+// 3. strictly avoid restating the prompt in the output.
+const prompt = `From the provided content, extract key points as standalone facts or ideas. Present these key points in a coherent, fluent narrative without making references to any speaker or dialogue. The resulting narrative should maintain a smooth flow in the format of a short paper with each sentence delivering significant insights from the content. Make sure to be succinct and comprehensive but also thorough`
 
 export const getInterpretationHandler = async (
     ytId,
@@ -49,12 +56,12 @@ export const getInterpretationHandler = async (
     }
 
     // map completions to a single interpretation
-    const interpretation = completions.map((c) =>
+    const content = completions.map((c) =>
         c.data.choices.map((c) => c.message.content).join(' ')
     )
 
     info(`saving interpretation to firebase`)
-    await FirebaseClient.addInterpretation(ytId, interpretation)
+    await FirebaseClient.addInterpretation(ytId, content)
 
     // if (postComment) {
     //     // TODO: automatically create comment on youtube video.
@@ -64,6 +71,6 @@ export const getInterpretationHandler = async (
 
     return {
         id: ytId,
-        interpretation
+        content
     }
 }

@@ -13,7 +13,8 @@ export default class OpenAIClient {
     static createChatCompletion = async (messages) => {
         return await this._openai.createChatCompletion({
             model: this._model,
-            messages
+            messages,
+            temperature: 0.0
         })
     }
 }

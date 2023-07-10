@@ -31,7 +31,10 @@ export default class FirebaseClient {
         if (querySnapshot.empty) {
             return null
         }
-        return querySnapshot.docs[0].data()
+        // if data.content is array return first element
+        const data = querySnapshot.docs[0].data()
+        if (Array.isArray(data.content)) data.content = data.content[0]
+        return data
     }
 
     static addInterpretation = async (yt_id, content) => {

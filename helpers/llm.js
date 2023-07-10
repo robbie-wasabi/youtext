@@ -1,4 +1,3 @@
-import nlp from 'compromise'
 import { Tiktoken } from './tiktoken.js'
 
 function createMessage(chunk, prompt) {
@@ -8,40 +7,41 @@ function createMessage(chunk, prompt) {
     }
 }
 
-// Split text into chunks of a maximum length
+// split the text into sentences without splitting the sentences themselves (easier said that done)
+// the youtube transcriber has a tendency to prefer commas or periods. our best bet for now is to split on the
+// punctuation that is most prevalent.
+function parseSentences(text) {
+    var sentences = []
+    const numPeriods = (text.match(/\./g) || []).length
+    const numCommas = (text.match(/,/g) || []).length
+    if (numPeriods > numCommas) {
+        sentences = text.split('.')
+    } else {
+        sentences = text.split(',')
+    }
+
+    return sentences.map((s) => s.replace(/[^\w\s]/g, ''))
+}
+
 export function splitText(
     text,
-    maxLength = 3000, // TODO: I think that they actually made the token limit larger...
+    maxChunkTokenSize = 3600, // TODO: I think that they actually made the token limit larger...
     model = 'gpt-3.5-turbo',
     question = ''
 ) {
-    // flatted paragraphs
-    var flattenedParagraphs = text.split('\n').join(' ')
+    const tiktoken = new Tiktoken(model)
+    const expectedTokenUsage =
+        tiktoken.countMessageTokens([createMessage(text, question)], model) + 1
 
-    // TODO:
-    // parse sententces... this isn't reliable
-    // var sentences = nlp(flattenedParagraphs).sentences().out('array')
     var sentences = []
-
-    // split the text into sentences without splitting the sentences themselves (easier said that done)
-    // the youtube transcriber has a tendency to prefer commas or periods. our best bet for now is to split on the
-    // punctuation that is most prevalent.
-    if (sentences.length <= 1 && text.length > maxLength) {
-        var numPeriods = (flattenedParagraphs.match(/\./g) || []).length
-        var numCommas = (flattenedParagraphs.match(/,/g) || []).length
-        if (numPeriods > numCommas) {
-            sentences = flattenedParagraphs.split(',')
-        } else {
-            sentences = flattenedParagraphs.split('.')
-        }
-
-        sentences = sentences.map((s) => s.replace(/[^\w\s]/g, ''))
+    if (expectedTokenUsage < maxChunkTokenSize) {
+        sentences = [text]
+    } else {
+        sentences = parseSentences(text)
     }
 
     var chunks = []
     var currentChunk = []
-
-    const tiktoken = new Tiktoken(model)
     sentences.forEach((s) => {
         s = s.trim()
         var messageWithAdditionalSentence = [
@@ -52,7 +52,7 @@ export function splitText(
             tiktoken.countMessageTokens(messageWithAdditionalSentence, model) +
             1
         console.log(expectedTokenUsage)
-        if (expectedTokenUsage <= maxLength) {
+        if (expectedTokenUsage <= maxChunkTokenSize) {
             currentChunk.push(s)
         } else {
             chunks.push(currentChunk.join(' '))
@@ -63,7 +63,7 @@ export function splitText(
 
             expectedTokenUsage =
                 tiktoken.countMessageTokens(messageThisSentenceOnly, model) + 1
-            if (expectedTokenUsage > maxLength) {
+            if (expectedTokenUsage > maxChunkTokenSize) {
                 throw new Error(
                     'Sentence is too long in webpage: ' +
                         expectedTokenUsage +

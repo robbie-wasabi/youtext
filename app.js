@@ -12,30 +12,13 @@ app.use((err, req, res, next) => {
     res.status(500).send('Internal Server Error')
 })
 
-app.get('/', async (req, res) => {
-    res.send('provide a youtube video id to get transcript')
-})
+app.get('/favicon.ico', (req, res) => res.status(204))
 
 app.get('/health', (req, res) => {
     res.status(200).send({
         status: 'Healthy',
         timestamp: new Date().toISOString()
     })
-})
-
-app.get('/:id', async (req, res, next) => {
-    try {
-        const { view, override } = req.query
-        const id = req.params.id
-        if (!id) {
-            throw new Error('Must supply YouTube video ID')
-        }
-
-        const transcript = await getTranscriptHandler(id)
-        view == '1' ? res.send(SimpleView(transcript)) : res.send(transcript)
-    } catch (error) {
-        next(error)
-    }
 })
 
 app.get('/:id/interpretation', async (req, res, next) => {
@@ -59,6 +42,25 @@ app.get('/:id/interpretation', async (req, res, next) => {
         console.log(error)
         next(error)
     }
+})
+
+app.get('/:id', async (req, res, next) => {
+    try {
+        const { view, override } = req.query
+        const id = req.params.id
+        if (!id) {
+            throw new Error('Must supply YouTube video ID')
+        }
+
+        const transcript = await getTranscriptHandler(id)
+        view == '1' ? res.send(SimpleView(transcript)) : res.send(transcript)
+    } catch (error) {
+        next(error)
+    }
+})
+
+app.get('/', async (req, res) => {
+    res.send('provide a youtube video id to get transcript')
 })
 
 app.listen(cfg.port, () => {
