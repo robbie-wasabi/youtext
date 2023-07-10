@@ -3,6 +3,7 @@ import cfg from './config.js'
 import { getTranscriptHandler } from './handlers/transcript.js'
 import { getInterpretationHandler } from './handlers/interpretation.js'
 import { SimpleView } from './helpers/views.js'
+import fs from 'fs'
 
 const app = express()
 
@@ -17,7 +18,8 @@ app.get('/favicon.ico', (req, res) => res.status(204))
 app.get('/health', (req, res) => {
     res.status(200).send({
         status: 'Healthy',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        version: fs.readFileSync('VERSION', 'utf8').trim()
     })
 })
 
