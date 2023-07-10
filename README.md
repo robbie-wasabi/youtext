@@ -8,6 +8,35 @@ Read succinct summaries of dialogue-heavy youtube videos like podcasts, document
 
 (I wanted this myself)
 
+## Tutorial
+
+1. simply grab the youtube video id that you want to summarize
+
+you can find this in the youtube video url:
+
+                           here ↓↓↓↓↓↓↓↓↓↓↓
+https://www.youtube.com/watch?v=L_Guz73e6fw&t=117s&ab_channel=LexFridman
+
+or click the "share button"
+
+            here ↓↓↓↓↓↓↓↓↓↓↓ 
+https://youtu.be/L_Guz73e6fw
+
+2. simply provide the video id after the youtext.io url
+
+```bash
+$ curl https://youtext.io/L_Guz73e6fw/interpretation
+
+# specify view=1 to return the interpretation *only*
+$ curl https://youtext.io/L_Guz73e6fw/interpretation?view=1
+```
+
+or for just the transcript
+
+```bash
+$ curl https://youtext.io/L_Guz73e6fw
+```
+
 ## WIP
 
 1. summaries of dialogues (with more than 1 speaker) have formatting inconsistencies and may be difficult to read. there is plenty of room for improvement here:
