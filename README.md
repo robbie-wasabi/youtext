@@ -14,13 +14,16 @@ Read succinct summaries of dialogue-heavy youtube videos like podcasts, document
 
 you can find this in the youtube video url:
 
+```
                            here ↓↓↓↓↓↓↓↓↓↓↓
 https://www.youtube.com/watch?v=L_Guz73e6fw&t=117s&ab_channel=LexFridman
+```
 
 or click the "share button"
-
+```
             here ↓↓↓↓↓↓↓↓↓↓↓ 
 https://youtu.be/L_Guz73e6fw
+```
 
 2. simply provide the video id after the youtext.io url
 
