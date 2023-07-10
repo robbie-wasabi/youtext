@@ -64,11 +64,25 @@ app.get('/:id', async (req, res, next) => {
 app.get('/', async (req, res) => {
     res.send(`
         <p>
-            Read AI-generated succinct summaries of dialogue-heavy youtube videos like podcasts, documentaries, tutorials, news, etc...<br/>
+            Read AI-generated succinct summaries of dialogue-heavy youtube videos like podcasts, documentaries, tutorials, news, etc...
+            <br/>
+            <br/>
+
+            TUTORIAL:<br/>
+            - Might take a few seconds to load.<br/>
             - Just paste the video id in the url like this: https://youtext.io/VIDEO_ID/interpretation<br/>
             - Append "?view=1" to see the transcript in a simple view.<br/>
             - Remove the /interpretation to fetch the transcript only.<br/>
             - Read more about this project here: <a style="cursor:pointer" href="https://github.com/quokkaine/youtext">https://github.com/quokkaine/youtext</a>
+
+            <br/>
+            <br/>
+
+            THIS IS A FUN EXPERIMENT. IT HAS BUGS. IT IS FUNDED BY A SINGLE DEVELOPER.<br/>
+
+            <br/>
+
+            email me here: rob@talostec.io
         </p>
     `)
 })
