@@ -1,37 +1,74 @@
 # YouText
 
-Simple extract and display YouTube transcripts in plain text.
+A simple open source api to extract and display YouTube transcripts in plain text.
 
 ## Why
 
-Read dialogue-heavy youtube videos like podcasts and documentaries.
+Read succinct summaries of dialogue-heavy youtube videos like podcasts, documentaries, tutorials, news, etc...
+
+(I wanted this myself)
+
+## WIP
+
+1. summaries of dialogues (with more than 1 speaker) have formatting inconsistencies and may be difficult to read. there is plenty of room for improvement here:
+    [ ] split summary into paragraphs for better readability
+    [ ] TODO
+2. probably should have written this in typescript :/
+
+
+## Contribution
+
+Submit a PR!
 
 ## Development
 
-```bash
-# install deps
-$ npm i
+_run your own instance locally_
 
-# run client
+### Architecture
+
+NodeJS, express, OpenAI API, Firebase
+
+### Setup
+
+create .env and fill in values
+```bash
+$ cp .env.local .env
+```
+
+install deps
+```bash
+$ npm i
+```
+
+### Run
+
+run with npm script
+```bash
 $ npm start
 ```
 
-docker
+### Docker
 
+run with docker
 ```bash
+# build and run
 $ docker build . -t rrossilli/youtext<version>
 $ docker run -p 3000:3000 rrossilli/youtext<version>
-```
 
-docker compose
-
-```bash
+# or with docker compose
 $ docker-compose up --build
 ```
 
-## TODOs:
+### Versioning
 
-1. figure out the correct output for any transcript input, is a summary sufficient or an outline or something else?
-2. automatic youtube video commenting
-3. our prompt has bugs sometimes, revise this potentially.
-4. etc... anything else you want
+install bumpversion if you don't have it already
+```bash
+$ brew install bumpversion
+```
+
+incremement version using one of these (self explanatory)
+```bash
+$ make bumpversion-patch
+$ make bumpversion-minor
+$ make bumpversion-major
+```
