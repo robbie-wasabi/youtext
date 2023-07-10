@@ -43,9 +43,10 @@ $ curl https://youtext.io/L_Guz73e6fw
 ## WIP
 
 1. summaries of dialogues (with more than 1 speaker) have formatting inconsistencies and may be difficult to read. there is plenty of room for improvement here:
-    [ ] split summary into paragraphs for better readability
-    [ ] TODO
+    a. split summary into paragraphs for better readability
+    b. TODO
 2. probably should have written this in typescript :/
+3. detect and omit ads
 
 
 ## Contribution
