@@ -4,8 +4,9 @@ import FirebaseClient from '../clients/firebase.js'
 import { createMessagesFromText } from '../helpers/llm.js'
 import Promise from 'promise'
 import { info as logInfo } from '../helpers/logger.js'
+import { sleep } from '../helpers/utils.js'
 
-const prompt = `Please summarize the key points from the transcript by extracting the essential information, removing unnecessary details, and refraining from introducing any external sources or speculative content. Focus solely on the core ideas discussed in the text without mentioning the speaker(s) or their beliefs. Again, your goal is to read the transcript, understand the concepts, and reexplain them in your own words without mentioning anything else.`
+const prompt = `Please extract the main points from the provided information, focusing on important details and omitting nonessential parts. Avoid referring to external sources or speculative content. Your task is to fully understand the crucial ideas presented and relay them in your own words, without referencing the origin or any additional context. The goal is to interpret the fundamental ideas being conveyed and restate them in a clear, succinct manner.`
 
 export const getInterpretationHandler = async (
     ytId,
@@ -36,11 +37,23 @@ export const getInterpretationHandler = async (
 
     // TODO: doesn't seem like we can add multiple user messages in a single request...
     async function createCompletions(messages) {
-        const completionsPromises = messages.map((m) =>
-            OpenAIClient.createChatCompletion([m])
-        )
-        return Promise.all(completionsPromises)
+        const chunkSize = 1
+        let completions = []
+
+        for (let i = 0; i < messages.length; i += chunkSize) {
+            const chunk = messages.slice(i, i + chunkSize)
+            const completionPromises = chunk.map((m) =>
+                OpenAIClient.createChatCompletion([m])
+            )
+            const chunkCompletions = await Promise.all(completionPromises)
+            completions = [...completions, ...chunkCompletions]
+            sleep(5000)
+        }
+
+        return completions
     }
+
+    console.log(messages)
 
     info(`creating completions`)
     const completions = await createCompletions(messages)
