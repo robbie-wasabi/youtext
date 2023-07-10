@@ -12,9 +12,10 @@ export class Tiktoken {
             tokensPerMessage = 4
             tokensPerName = -1
             model = 'gpt-3.5-turbo-0301'
-        } else if (model == 'gpt-4-0314') {
+        } else if (model.startsWith('gpt-4')) {
             tokensPerMessage = 3
             tokensPerName = 1
+            model = 'gpt-4'
         } else {
             throw new Error(
                 `num_tokens_from_messages() is not implemented for model ${model}.\n` +
