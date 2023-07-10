@@ -25,7 +25,9 @@ export default class YoutubeClient {
 
         return data
     }
+}
 
+export class YoutubeCommentorClient {
     // TODO: in progress
     // https://developers.google.com/youtube/v3/docs/commentThreads/insert
     // static createComment = async (videoId, commentText, apiKey) => {
@@ -33,7 +35,6 @@ export default class YoutubeClient {
     //         version: 'v3',
     //         auth: config.apiKey
     //     })
-
     //     const commentThreadData = {
     //         snippet: {
     //             channelId: '', // The channel ID of the user creating the comment
@@ -45,13 +46,11 @@ export default class YoutubeClient {
     //             }
     //         }
     //     }
-
     //     try {
     //         const response = await youtube.commentThreads.insert({
     //             part: 'snippet',
     //             requestBody: commentThreadData
     //         })
-
     //         console.log('Comment created:', response.data)
     //         return response.data
     //     } catch (error) {

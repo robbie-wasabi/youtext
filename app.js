@@ -62,7 +62,15 @@ app.get('/:id', async (req, res, next) => {
 })
 
 app.get('/', async (req, res) => {
-    res.send('provide a youtube video id to get transcript')
+    res.send(`
+        <p>
+            Read AI-generated succinct summaries of dialogue-heavy youtube videos like podcasts, documentaries, tutorials, news, etc...<br/>
+            - Just paste the video id in the url like this: https://youtext.io/VIDEO_ID/interpretation<br/>
+            - Append "?view=1" to see the transcript in a simple view.<br/>
+            - Remove the /interpretation to fetch the transcript only.<br/>
+            - Read more about this project here: <a style="cursor:pointer" href="https://github.com/quokkaine/youtext">https://github.com/quokkaine/youtext</a>
+        </p>
+    `)
 })
 
 app.listen(cfg.port, () => {
