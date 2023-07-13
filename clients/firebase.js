@@ -33,7 +33,7 @@ export default class FirebaseClient {
         }
         // if data.content is array return first element
         const data = querySnapshot.docs[0].data()
-        if (Array.isArray(data.content)) data.content = data.content[0]
+        if (Array.isArray(data.content)) data.content = data.content.join(' ')
         return data
     }
 
