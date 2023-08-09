@@ -1,12 +1,10 @@
 # YouText
 
-A simple open source api to extract and display YouTube transcripts in plain text.
+Read succinct AI-interpreted summaries of dialogue-heavy youtube videos like podcasts, documentaries, tutorials, news, etc...
 
 ## Why
 
-Read succinct summaries of dialogue-heavy youtube videos like podcasts, documentaries, tutorials, news, etc...
-
-(I wanted this myself)
+Today, a vast portion of essential content and discourse is disseminated via online videos. While videos, including lectures and podcasts, offer an engaging medium, they often don't match the efficiency of reading. YouText aims to bridge this gap, providing users with a more streamlined method to absorb this information.
 
 ## Tutorial
 
