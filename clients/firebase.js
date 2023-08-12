@@ -8,8 +8,7 @@ import {
     getDocs,
     query,
     where,
-    addDoc,
-    doc
+    addDoc
 } from 'firebase/firestore'
 import config from '../config.js'
 

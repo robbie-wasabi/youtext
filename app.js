@@ -35,7 +35,7 @@ app.get('/:id/interpretation', async (req, res) => {
     }
 
     const interpretation = await getInterpretationHandler(id)
-    res.send(interpretation)
+    res.send(interpretation.content)
 })
 
 app.listen(cfg.port, () => {
