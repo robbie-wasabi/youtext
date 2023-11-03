@@ -46,10 +46,23 @@ $ curl https://youtext.io/L_Guz73e6fw
 2. probably should have written this in typescript :/
 3. detect and omit ads
 
-
 ## Contribution
 
 Submit a PR!
+
+### Versioning
+
+install bumpversion if you don't have it already
+```bash
+$ brew install bumpversion
+```
+
+incremement version using one of these (self explanatory)
+```bash
+$ make bumpversion-patch
+$ make bumpversion-minor
+$ make bumpversion-major
+```
 
 ## Development
 
@@ -90,16 +103,9 @@ $ docker run -p 3000:3000 rrossilli/youtext<version>
 $ docker-compose up --build
 ```
 
-### Versioning
+### K8s
 
-install bumpversion if you don't have it already
+deploy to kubernetes cluster
 ```bash
-$ brew install bumpversion
-```
-
-incremement version using one of these (self explanatory)
-```bash
-$ make bumpversion-patch
-$ make bumpversion-minor
-$ make bumpversion-major
+$ kubectl apply -f k8s/deploy.<environment>.yml
 ```
